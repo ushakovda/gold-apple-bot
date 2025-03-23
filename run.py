@@ -1,8 +1,9 @@
 import asyncio
-from aiogram import Bot, Dispatcher
-from config import TOKEN
+from aiogram import Bot, Dispatcher, types
+from src.config import TOKEN
 import logging
-from handlers import main_router
+from src.handlers import main_router
+from db.db import init_db
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
@@ -12,8 +13,12 @@ logging.getLogger("aiogram").setLevel(logging.WARNING)
 dp.include_router(main_router)
 
 
+async def on_startup():
+    await init_db()
+
 async def main():
     print("Бот запущен...")
+    await on_startup()
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
