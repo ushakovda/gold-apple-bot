@@ -1,18 +1,22 @@
 import logging
 
-from aiogram import Router
+from aiogram import F, Router
 from aiogram.types import Message
 from aiogram.filters import Command
-from src.keyboards import main_menu
-from aiogram.types import FSInputFile
-from db.users import add_user
+from src.keyboards import main_menu, confirm_product
+from aiogram.types import FSInputFile, CallbackQuery
+from db.users import add_user, save_product_and_link_user
+from aiogram.fsm.context import FSMContext
+from src.states import LinkInput
+from parser.parser import parse_goldapple_product
 
 logger = logging.getLogger(__name__)
 main_router = Router()
 
 
 @main_router.message(Command("start"))
-async def start_handler(message: Message):
+async def start_handler(message: Message, state: FSMContext):
+    await state.clear()
     text = (f"Золотое яблоко чеееек")
 
     photo = FSInputFile("src/images/main_menu.jpg")
@@ -28,8 +32,34 @@ async def start_handler(message: Message):
     await add_user(tg_id, username)
     logger.info(f"{username} в главном меню")
 
+@main_router.callback_query(F.data == "links")
+async def handle_links_callback(callback: CallbackQuery, state: FSMContext):
+    await callback.message.delete()
+    await callback.message.answer("Отправьте ссылку, которую хотите сохранить:")
+    await state.set_state(LinkInput.waiting_for_link)
 
-
+@main_router.message(LinkInput.waiting_for_link)
+async def handle_link_input(message: Message, state: FSMContext):
+    user_link = message.text.strip()
+    # Здесь можно сделать валидацию или сохранить ссылку
+    await message.answer(f"Ссылка получена: {user_link}, получаю данные о товаре...")
+    await state.clear()
+    product_data = parse_goldapple_product(user_link)
+    print(product_data)
+    await save_product_and_link_user(
+        tg_id=message.from_user.id,
+        product_data=product_data,
+        url=user_link
+    )
+    #ToDo удалить старое сообщение и добавить логирование
+    await message.answer(
+        f"<b>Найден товар:</b>\n"
+        f"🔹 <b>Название:</b> {product_data.get('name') or 'Нет данных'}\n"
+        f"💰 <b>Цена:</b> {product_data.get('price') or 'Нет данных'} ₽\n"
+        f"🏷 <b>Бренд:</b> {product_data.get('brand') or 'Нет данных'}",
+        parse_mode="HTML",
+        reply_markup=confirm_product
+    )
 # @main_router.callback_query(lambda c: c.data == "btn2")
 # async def instruction_handler(callback: CallbackQuery):
 #     await callback.message.delete()

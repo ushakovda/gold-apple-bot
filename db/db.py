@@ -22,6 +22,18 @@ async def init_db():
             created_at TEXT NOT NULL
                 )
                 """)
+        await db.execute("""
+        CREATE TABLE IF NOT EXISTS user_products (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            product_id INTEGER NOT NULL,
+            FOREIGN KEY(user_id) REFERENCES users(id),
+            FOREIGN KEY(product_id) REFERENCES products(id),
+            UNIQUE(user_id, product_id)
+        );    
+        """)
+
+
         await db.commit()
 
 

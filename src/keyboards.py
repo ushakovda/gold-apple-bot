@@ -3,11 +3,17 @@ from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardBut
 main_menu = InlineKeyboardMarkup(
     inline_keyboard=[
         [InlineKeyboardButton(text="📲 РЕГИСТРАЦИЯ", url="https://1wcneg.com/v3/2158/1win-mines?p=8amb"),
-         InlineKeyboardButton(text="📑 ИНСТРУКЦИЯ", callback_data="btn2")],  # Две кнопки в одном ряду
-        [InlineKeyboardButton(text="🚀 ВЫДАТЬ СИГНАЛ ", callback_data="links", width=2)]  # Одна кнопка на всю ширину
+         InlineKeyboardButton(text="📑 ИНСТРУКЦИЯ", callback_data="btn2")],
+        [InlineKeyboardButton(text="🚀 ВЫДАТЬ СИГНАЛ ", callback_data="links", width=2)]
     ]
 )
 
+confirm_product = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(text="✅ Всё верно", callback_data="confirm_product"),
+         InlineKeyboardButton(text="❌ Не тот товар", callback_data="cancel_product")],
+    ]
+)
 
 
 #

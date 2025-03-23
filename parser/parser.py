@@ -4,6 +4,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.common.exceptions import NoSuchElementException
 import time
 
+
 def parse_goldapple_product(url: str) -> dict:
     options = uc.ChromeOptions()
     options.add_argument("--start-maximized")
@@ -11,10 +12,7 @@ def parse_goldapple_product(url: str) -> dict:
     driver = uc.Chrome(options=options)
 
     driver.get(url)
-
-    # Подождём визуально (можно заменить на WebDriverWait)
-    time.sleep(5)
-
+    time.sleep(20)
     data = {}
 
     try:
@@ -37,11 +35,5 @@ def parse_goldapple_product(url: str) -> dict:
     except NoSuchElementException:
         data['description'] = None
 
-    time.sleep(10)  # чтобы успеть увидеть
     driver.quit()
     return data
-
-# Пример использования:
-product_url = "https://goldapple.ru/7302300002-toy-boy"
-info = parse_goldapple_product(product_url)
-print(info)

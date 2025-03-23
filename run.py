@@ -4,9 +4,11 @@ from src.config import TOKEN
 import logging
 from src.handlers import main_router
 from db.db import init_db
+from aiogram.fsm.storage.memory import MemoryStorage
 
+storage = MemoryStorage()
 bot = Bot(token=TOKEN)
-dp = Dispatcher()
+dp = Dispatcher(storage=storage)
 
 logging.basicConfig(level=logging.INFO, format='[%(asctime)s] %(levelname)s - %(message)s')
 logging.getLogger("aiogram").setLevel(logging.WARNING)
