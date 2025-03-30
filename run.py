@@ -5,6 +5,7 @@ import logging
 from src.handlers import main_router
 from db.db import init_db
 from aiogram.fsm.storage.memory import MemoryStorage
+from src.price_checker import check_prices_loop
 
 storage = MemoryStorage()
 bot = Bot(token=TOKEN)
@@ -21,6 +22,7 @@ async def on_startup():
 async def main():
     print("Бот запущен...")
     await on_startup()
+    asyncio.create_task(check_prices_loop(bot))
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
