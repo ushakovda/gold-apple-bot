@@ -8,9 +8,8 @@ async def init_db():
         CREATE TABLE IF NOT EXISTS products (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT,
-            price REAL,
             brand TEXT,
-            description TEXT,
+            price REAL,
             url TEXT UNIQUE
         )
         """)
@@ -32,28 +31,4 @@ async def init_db():
             UNIQUE(user_id, product_id)
         );    
         """)
-
-
         await db.commit()
-
-
-
-# async def add_product(data: dict):
-#     async with aiosqlite.connect(DB_PATH) as db:
-#         await db.execute("""
-#             INSERT OR IGNORE INTO products (name, price, brand, description, url)
-#             VALUES (?, ?, ?, ?, ?)
-#         """, (
-#             data.get("name"),
-#             float(data.get("price")) if data.get("price") else None,
-#             data.get("brand"),
-#             data.get("description"),
-#             data.get("url"),
-#         ))
-#         await db.commit()
-#
-# async def get_all_products():
-#     async with aiosqlite.connect(DB_PATH) as db:
-#         cursor = await db.execute("SELECT * FROM products")
-#         rows = await cursor.fetchall()
-#         return rows
